@@ -1,0 +1,28 @@
+// ==UserScript==
+// @name         PC sheet tab
+// @namespace    http://tampermonkey.net/
+// @version      0.1
+// @description  try to take over the world!
+// @author       Hustandant
+// @match        https://mppclone.com/*
+// @icon         data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==
+// @grant        none
+// ==/UserScript==
+
+var pc_wind = false;
+
+
+function pc_sheet_wind(){
+    if(pc_wind){
+$("#chat").append(`<textarea id="pc-wind" autocomplete="off" placeholder="You sheet here..." ></textarea>`);
+$("#pc-wind").css({resize: "none", height: "266px", width: "1274px", overflow:"hidden", "border-radius": "8px"})
+    }
+    else{
+    $("#pc-wind").remove()
+    }
+}
+$("#bottom .relative").append(`<div id="pc-btn" class="ugly-button translate">PC sheet</div>`);
+$("#pc-btn").css({position: "absolute", left: "780px", top: "4px"}).on("click", () => {
+    pc_wind = !pc_wind;
+    pc_sheet_wind();
+});
