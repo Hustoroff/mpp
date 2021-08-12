@@ -24,9 +24,12 @@ d.style.left= '0px';
 d.id='backgdiv'
 document.body.appendChild(d);
          $("#backgdiv").css({width: window.innerWidth, height: window.innerHeight, "background-position": "25% 25%", "background-size": "cover", "backdrop-effect": "blur(4px)", "background-image": "url('https://steamuserimages-a.akamaihd.net/ugc/878625026160084538/0399E81B0D1CF96C853CFCC1288D3E0A3D708049/?imw=1024&imh=819&ima=fit&impolicy=Letterbox&imcolor=%23000000&letterbox=true')"})
+         $("#bottom .relative").append(`<div id="btn-pad"></div>`);
+         $("#btn-pad").css({width: window.innerWidth, height: "111px", background: "rgb(1, 1, 30)"})
      }
     else{
         $("#backgdiv").remove();
+        $("#btn-pad").remove();
     }
 }
 
