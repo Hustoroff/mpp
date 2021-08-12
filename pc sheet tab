@@ -9,20 +9,60 @@
 // @grant        none
 // ==/UserScript==
 
+var backg = false;
 var pc_wind = false;
+var piano = true;
 
+function background_del(){
+     if(backg){
+        var d=document.createElement('div');
+d.style.width = '1280px';
+d.style.height = '913px';
+d.style.position = 'absolute';
+d.style.top= '0px';
+d.style.left= '0px';
+d.id='backgdiv'
+document.body.appendChild(d);
+         $("#backgdiv").css({width: window.innerWidth, height: window.innerHeight, "background-position": "25% 25%", "background-size": "cover", "backdrop-effect": "blur(4px)", "background-image": "url('https://steamuserimages-a.akamaihd.net/ugc/878625026160084538/0399E81B0D1CF96C853CFCC1288D3E0A3D708049/?imw=1024&imh=819&ima=fit&impolicy=Letterbox&imcolor=%23000000&letterbox=true')"})
+     }
+    else{
+        $("#backgdiv").remove();
+    }
+}
+
+function piano_delete(){
+     if(piano){
+         $("#piano").css({"margin-top":"335px"})
+     }
+    else{
+    $("#piano").css({"margin-top":"1000px"})
+    }
+}
 
 function pc_sheet_wind(){
     if(pc_wind){
 $("#chat").append(`<textarea id="pc-wind" autocomplete="off" placeholder="You sheet here..." ></textarea>`);
-$("#pc-wind").css({resize: "none", height: "266px", width: "1274px", overflow:"hidden", "border-radius": "8px"})
+$("#pc-wind").css({resize: "none", height: "266px", width: window.innerWidth, overflow:"hidden", "border-radius": "8px"})
     }
     else{
     $("#pc-wind").remove()
     }
 }
+
 $("#bottom .relative").append(`<div id="pc-btn" class="ugly-button translate">PC sheet</div>`);
 $("#pc-btn").css({position: "absolute", left: "780px", top: "4px"}).on("click", () => {
     pc_wind = !pc_wind;
     pc_sheet_wind();
 });
+
+$("#bottom .relative").append(`<div id="pianodel" class="ugly-button translate">Piano deleter</div>`);
+$("#pianodel").css({position: "absolute", left: "900px", top: "32px"}).on("click", () => {
+    piano = !piano;
+    piano_delete();
+});
+
+$("#bottom .relative").append(`<div id="back" class="ugly-button translate">Background</div>`);
+$("#back").css({position: "absolute", left: "780px", top: "32px"}).on("click", () => {
+  backg = !backg;
+  background_del();
+})
