@@ -1,71 +1,100 @@
 // ==UserScript==
-// @name         PC sheet tab
+// @name         MVPS
 // @namespace    http://tampermonkey.net/
-// @version      0.2
-// @description  try to take over the world!
+// @version      0.3
+// @description  MVPS [Multi Visual Piano Script] designed to expand the technical and visual capabilities of the MPP.
 // @author       Hustandant
 // @match        https://mppclone.com/*
-// @icon         data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==
+// @icon         https://github.com/Hustoroff/mpp/blob/main/icon.png?raw=true
+// @updateURL    https://raw.githubusercontent.com/Hustoroff/mpp/main/MVPS
+// @downloadURL  https://raw.githubusercontent.com/Hustoroff/mpp/main/MVPS
 // @grant        none
 // ==/UserScript==
 
-var backg = false;
-var pc_wind = false;
-var piano = true;
+$("#bottom .relative").append(`<div id="Hust_client" class="ugly-button 2_btn">Hust settings</div>`);
+$("#Hust_client").css({position: "absolute", left: "780px", top: "32px"}).on("click", () => {
+MPP.client.emit("notification", {
 
-function background_del(){
+		title: "Hust settings",
+		duration:-1,
+        target:"#Hust_client",
+        html:`
+        <script>
+        var pc_wind = false;
+        var backg = false;
+        var piano = true;
+        var chat_hide = false;
+        var cursor_hide = false;
+        var url_back = "https://steamuserimages-a.akamaihd.net/ugc/878625026160084538/0399E81B0D1CF96C853CFCC1288D3E0A3D708049/?imw=1024&imh=819&ima=fit&impolicy=Letterbox&imcolor=%23000000&letterbox=true";
+
+        function pc_sheet_wind(){
+         if(pc_wind){
+         $("#chat").append(\`<textarea id="pc-wind" autocomplete="off" placeholder="Your sheet here..." ></textarea>\`);
+         $("#pc-wind").css({resize: "none", height: "266px", width: window.innerWidth, overflow:"hidden", "border-radius": "8px"})
+         }
+         else{
+         $("#pc-wind").remove()
+         }
+         }
+
+         function background_del(){
      if(backg){
         var d=document.createElement('div');
-d.style.width = '1280px';
-d.style.height = '913px';
-d.style.position = 'absolute';
-d.style.top= '0px';
-d.style.left= '0px';
-d.id='backgdiv'
-document.body.appendChild(d);
-         $("#backgdiv").css({width: window.innerWidth, height: window.innerHeight, "background-position": "25% 25%", "background-size": "cover", "backdrop-effect": "blur(4px)", "background-image": "url('https://steamuserimages-a.akamaihd.net/ugc/878625026160084538/0399E81B0D1CF96C853CFCC1288D3E0A3D708049/?imw=1024&imh=819&ima=fit&impolicy=Letterbox&imcolor=%23000000&letterbox=true')"})
-         $("#bottom .relative").append(`<div id="btn-pad"></div>`);
-         $("#btn-pad").css({width: window.innerWidth, height: "111px", background: "rgb(1, 1, 30)"})
+        d.style.width = '1280px';
+        d.style.height = '913px';
+        d.style.position = 'absolute';
+        d.style.top= '0px';
+        d.style.left= '0px';
+        d.id='backgdiv'
+      document.body.appendChild(d);
+         $("#backgdiv").css({width: window.innerWidth, height: window.innerHeight, "background-position": "25% 25%", "background-size": "cover", "backdrop-effect": "blur(4px)", "background-image": "url("+url_back+")"})
+         $("#bottom .relative").append(\`<div id="btn-pad"></div>\`);
+         console.log(url_back)
      }
     else{
         $("#backgdiv").remove();
         $("#btn-pad").remove();
     }
-}
+    }
 
-function piano_delete(){
+    function piano_delete(){
      if(piano){
-         $("#piano").css({"margin-top":"335px"})
+         $("#piano").css({opacity: "1"})
      }
     else{
-    $("#piano").css({"margin-top":"1000px"})
+    $("#piano").css({opacity: "0"})
     }
-}
+    }
 
-function pc_sheet_wind(){
-    if(pc_wind){
-$("#chat").append(`<textarea id="pc-wind" autocomplete="off" placeholder="You sheet here..." ></textarea>`);
-$("#pc-wind").css({resize: "none", height: "266px", width: window.innerWidth, overflow:"hidden", "border-radius": "8px"})
+    function chat_clear(){
+     $('ul').empty();
+    }
+
+    function chat_hde(){
+    if(chat_hide){
+    $('ul').css({opacity: "0"});
     }
     else{
-    $("#pc-wind").remove()
+    $('ul').css({opacity: "1"});
     }
-}
+    }
 
-$("#bottom .relative").append(`<div id="pc-btn" class="ugly-button translate">PC sheet</div>`);
-$("#pc-btn").css({position: "absolute", left: "780px", top: "4px"}).on("click", () => {
-    pc_wind = !pc_wind;
-    pc_sheet_wind();
+    function cursor_hde(){
+    if(cursor_hide){
+    $('#cursors').css({opacity: "0"});
+    }
+    else{
+    $('#cursors').css({opacity: "1"});
+    }
+    }
+        </script>
+        <h1>Visual:</h1></p>
+        <div id="pc-btn" class="ugly-button" onclick='pc_wind = !pc_wind, pc_sheet_wind()'>PC sheet</div>
+        <div id="pianodel" class="ugly-button" onclick='piano = !piano, piano_delete();'>Piano deleter</div>
+        <div id="cht-clr" class="ugly-button" onclick='chat_clear()'>Clear chat</div>
+        <div id="cht-hdn" class="ugly-button" onclick='chat_hide=!chat_hide, chat_hde()'>Hide chat</div>
+        <div id="crsr-hdn" class="ugly-button" onclick='cursor_hide=!cursor_hide, cursor_hde()'>Hide cursor</div>
+
+        <input type="text" id="inp-back" placeholder="New backround (Image URL)" ><button id="back" onclick='url_back = document.getElementById(\`inp-back\`).value, backg = !backg, background_del(url_back);'>Background</button></input>`
+	});
 });
-
-$("#bottom .relative").append(`<div id="pianodel" class="ugly-button translate">Piano deleter</div>`);
-$("#pianodel").css({position: "absolute", left: "900px", top: "32px"}).on("click", () => {
-    piano = !piano;
-    piano_delete();
-});
-
-$("#bottom .relative").append(`<div id="back" class="ugly-button translate">Background</div>`);
-$("#back").css({position: "absolute", left: "780px", top: "32px"}).on("click", () => {
-  backg = !backg;
-  background_del();
-})
