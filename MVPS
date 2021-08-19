@@ -2,7 +2,7 @@
 // @name         MVPS
 // @namespace    http://tampermonkey.net/
 // @version      0.3
-// @description  MVPS [Multi Visual Piano Script] designed to expand the technical and visual capabilities of the MPP.
+// @description  MVPS [Multi Visual Piano Script] designed to expand the technical and visual capabilities of the MPP
 // @author       Hustandant
 // @match        https://mppclone.com/*
 // @icon         https://github.com/Hustoroff/mpp/blob/main/icon.png?raw=true
@@ -11,13 +11,13 @@
 // @grant        none
 // ==/UserScript==
 
-$("#bottom .relative").append(`<div id="Hust_client" class="ugly-button 2_btn">Hust settings</div>`);
-$("#Hust_client").css({position: "absolute", left: "780px", top: "32px"}).on("click", () => {
+$("#bottom .relative").append(`<div id="MVPS" class="ugly-button 2_btn">MVPS</div>`);
+$("#MVPS").css({position: "absolute", left: "780px", top: "32px"}).on("click", () => {
 MPP.client.emit("notification", {
 
-		title: "Hust settings",
+		title: "Multi Visual Piano Script (by Hustandant)",
 		duration:-1,
-        target:"#Hust_client",
+        target:"#MVPS",
         html:`
         <script>
         var pc_wind = false;
