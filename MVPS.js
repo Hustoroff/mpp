@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         MVPS
 // @namespace    http://tampermonkey.net/
-// @version      0.4
+// @version      0.4.5
 // @description  MVPS [Multi Visual Piano Script] designed to expand the technical and visual capabilities of the MPP
 // @author       Hustandant#8787
 // @match        *://mppclone.com/*
@@ -13,7 +13,7 @@
 // @icon         https://github.com/Hustoroff/mpp/blob/main/icon.png?raw=true
 // @updateURL    https://raw.githubusercontent.com/Hustoroff/mpp/main/MVPS.js
 // @downloadURL  https://raw.githubusercontent.com/Hustoroff/mpp/main/MVPS.js
-// @resource     MVPS https://raw.githubusercontent.com/Hustoroff/mpp/main/MVPS.js
+// @resource     https://raw.githubusercontent.com/Hustoroff/mpp/main/MVPS.js
 // @grant        none
 // ==/UserScript==
 
@@ -26,6 +26,25 @@ MPP.client.emit("notification", {
         target:"#chat-input",
         html:`<p>MVPS [Multi Visual Piano Script] was created by Hustandant to enhance the site's capabilities. If you would like to suggest an idea or report a bug please contact Hustandant#8787.</br></p> Join our discord server: <a target="_blank" href="https://discord.gg/tm6EYtAAmV">https://discord.gg/tm6EYtAAmV<a>`
 });
+}
+
+MPP.client.on("a", msg => {
+    if(msg.p.id != MPP.client.participantId)
+        playSound('https://audiokaif.ru/wp-content/uploads/2019/04/5-%D0%97%D0%B2%D1%83%D0%BA-%D1%81%D0%BE%D0%BE%D0%B1%D1%89%D0%B5%D0%BD%D0%B8%D1%8F-%D0%B2-facebook.mp3');
+        });
+MPP.client.on("dm", msg =>{
+     playSound_2('https://audiokaif.ru/wp-content/uploads/2019/04/13-%D0%97%D0%B2%D1%83%D0%BA-%D1%81%D0%BE%D0%BE%D0%B1%D1%89%D0%B5%D0%BD%D0%B8%D1%8F-%D0%B2-%D0%B4%D0%B8%D1%81%D0%BA%D0%BE%D1%80%D0%B4%D0%B5.mp3')
+});
+
+
+function playSound(url) {
+  const audio = new Audio(url);
+  audio.play();
+}
+
+function playSound_2(url) {
+  const audio = new Audio(url);
+  audio.play();
 }
 
 setTimeout(adnot, 2000);
@@ -361,6 +380,8 @@ function sin_to_hex(i, phase) {
 
 
 
+
+
 $("#bottom .relative").append(`<div id="MVPS" class="ugly-button 2_btn">MVPS</div>`);
 $("#MVPS").css({position: "absolute", left: "780px", top: "32px"}).on("click", () => {
     var MVPS_not = false;
@@ -388,6 +409,7 @@ MPP.client.emit("notification", {
         var drawboard_hide = true;
         var visnoted = false;
         var rainbownick = false;
+        var invsblcrsr = false;
         var url_back = "https://steamuserimages-a.akamaihd.net/ugc/878625026160084538/0399E81B0D1CF96C853CFCC1288D3E0A3D708049/?imw=1024&imh=819&ima=fit&impolicy=Letterbox&imcolor=%23000000&letterbox=true";
 
         function showpreview(e) {
@@ -555,11 +577,18 @@ MPP.client.emit("notification", {
         count++;
     }
 
-    }, 33);
 
+    }, 33);
+    setInterval(function() {
+if(invsblcrsr){
+    MPP.client.sendArray([{m:'m', x: 100000, y: 100000}]);
+    }
+    },12);
     function pianospn(){
     $("#piano").toggleClass("spin", pianospinbool)
     }
+
+
 
         </script>
 
@@ -586,13 +615,14 @@ MPP.client.emit("notification", {
         <h3>Other settings:</h3>
         <div id="pc-btn" class="ugly-button" onclick='pc_wind = !pc_wind, pc_sheet_wind()'>PC sheet</div>
         <div id="visnote-clr" class="ugly-button" onclick='visnoted = !visnoted, visnote_hde()'>Visual notes</div>
+        <div id="invsblcrsr" class="ugly-button" onclick="invsblcrsr = !invsblcrsr">Invisible cursor</div>
         <div id="rnbw" class="ugly-button" onclick='rainbowmode = !rainbowmode' title="ANIME!?!?!??!?!?!??!?!??!?!">Rainbow room</div>
         <div id="rnbwnt" class="ugly-button" onclick='rainbowmodenote = !rainbowmodenote'>Rainbow notes</div>
         <div id="rnnbwnick" class="ugly-button" onclick='rainbownick = !rainbownick'>Rainbow nick</div>
         <div id="pnospn" class="ugly-button" onclick='pianospinbool = !pianospinbool, pianospn()'>Spin piano</div>
         </div>
         <div id="ad_block" style="border-radius: 10px; background-color: #171115; border: 2px solid #333; padding: 4px 12px">
-        Thanks for using MVPS (◕‿◕✿). Join our discord server: <a target="_blank" href="https://discord.gg/tm6EYtAAmV">https://discord.gg/tm6EYtAAmV<a>.
+        Thanks for using MVPS (◕‿◕✿). Join our discord server: <a target="_blank" href="https://discord.gg/tm6EYtAAmV">https://discord.gg/tm6EYtAAmV<a>
         </div>
         `
 	});
