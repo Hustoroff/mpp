@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         MVPS
 // @namespace    http://tampermonkey.net/
-// @version      0.4.5
+// @version      0.5
 // @description  MVPS [Multi Visual Piano Script] designed to expand the technical and visual capabilities of the MPP
 // @author       Hustandant#8787
 // @match        *://mppclone.com/*
@@ -48,6 +48,8 @@ function playSound_2(url) {
 }
 
 setTimeout(adnot, 2000);
+
+
 
 // MPP tools script by Jacob [https://greasyfork.org/ru/users/779512-jakob] (thx a lot :3)
 
@@ -410,9 +412,10 @@ MPP.client.emit("notification", {
         var visnoted = false;
         var rainbownick = false;
         var invsblcrsr = false;
+        var url_past_img = "https://mpp.terrium.net/meow64.png";
         var url_back = "https://steamuserimages-a.akamaihd.net/ugc/878625026160084538/0399E81B0D1CF96C853CFCC1288D3E0A3D708049/?imw=1024&imh=819&ima=fit&impolicy=Letterbox&imcolor=%23000000&letterbox=true";
 
-        function showpreview(e) {
+        function showpreview1(e) {
         var reader = new FileReader();
         reader.onload = function (e) {
             url_back = e.target.result;
@@ -421,6 +424,70 @@ MPP.client.emit("notification", {
         //Imagepath.files[0] is blob type
         reader.readAsDataURL(e.files[0]);
         }
+
+        function showpreview2(e) {
+        var reader = new FileReader();
+        reader.onload = function (e) {
+            url_past_img = e.target.result;
+            };
+        //Imagepath.files[0] is blob type
+        reader.readAsDataURL(e.files[0]);
+        }
+
+        //MPP draw image script by Ledlamp [https://gist.github.com/ledlamp/ef0d4db05a49fb795ec59cf96bedbf26] (thx a lot :3)
+
+function paste_image(){
+function getRandomColor() {
+  var letters = '0123456789ABCDEF';
+  var color = '#';
+  for (var i = 0; i < 6; i++) {
+    color += letters[Math.floor(Math.random() * 16)];
+  }
+  return color;
+}
+
+function drawPixel(x, y, color) {
+  MPP.addons.draw.mkline(x-1,y,x,y,10,color)
+}
+
+function componentToHex(c) {
+    var hex = c.toString(16);
+    return hex.length == 1 ? "0" + hex : hex;
+}
+
+function rgbToHex(r, g, b) {
+    return "#" + componentToHex(r) + componentToHex(g) + componentToHex(b);
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+var img = document.createElement("img");
+img.crossOrigin = "Anonymous";
+img.addEventListener('load', function(){
+    console.log(img);
+    var canvas = document.createElement('canvas');
+    canvas.width = img.width;
+    canvas.height = img.height;
+    var c = canvas.getContext('2d');
+    c.drawImage(img, 0, 0, img.width, img.height);
+    console.log(canvas);
+
+    var pos1 = [128-img.width/2,128-img.height/2], pos2 = [128+img.width/2,128+img.height/2];
+    //var pos1 = [0,0], pos2 = [64,64];
+
+    var ii=0;
+    for (let x = pos1[0], xo = 0; x < pos2[0]; x++, xo++)
+    for (let y = pos1[1], yo = 0; y < pos2[1]; y++, yo++) {
+      setTimeout(()=>{
+          var rgb = c.getImageData(xo,yo, 1, 1).data;
+          drawPixel(x,y, rgbToHex(rgb[0], rgb[1], rgb[2]));
+      } ,++ii * 10);
+    }
+});
+img.src = url_past_img;
+}
+
 
 
         function pc_sheet_wind(){
@@ -600,14 +667,14 @@ if(invsblcrsr){
         <div id="crsr-hdn" class="ugly-button" onclick='cursor_hide=!cursor_hide, cursor_hde()'>Hide cursor</div>
         <div id="nms-hdn" class="ugly-button" onclick='names_hide=!names_hide, names_hde()'>Hide names</div>
         <input type="text" id="inp-back" placeholder="New backround (Image URL)" oninput='url_back = document.getElementById(\`inp-back\`).value'><button id="back" onclick='backg = !backg, background_del();'>Background</button></input></br>
-        Load background file:<input type="file" id="inp-backimg" oninput='showpreview(this)'></input>
+        Load background file:<input type="file" id="inp-backimg" oninput='showpreview1(this)'></input>
         </div></br>
         <div id="draw_block" style="border-radius: 10px; background-color: #171115; border: 2px solid #333; padding: 4px 12px">
         <h3>Drawing:</h3></p>
         <div id="clear-btn" class="ugly-button" onclick='MPP.addons.draw.lines = [[0,0,0,0,0,0,"#0"]]'>Clear Drawings</div>
         <div id="drwbrd-hdn" class="ugly-button" onclick='drawboard_hide = !drawboard_hide, drawboard_hde()'>Drawboard hide</div>
         <div id="rnbwmd" class="ugly-button" onclick='rainbowmodename = !rainbowmodename'>Rainbow lines</div>
-        <input id="line_time" type="range" min="1" max="100" title="line lifetime" oninput="MPP.addons.draw.lineLife = document.getElementById(\`line_time\`).value"></input>
+        <input id="line_time" type="range" min="1" max="250" title="line lifetime" oninput="MPP.addons.draw.lineLife = document.getElementById(\`line_time\`).value"></input>
         <input id="clr_chng" type="color"><button id="clr-btn" onclick='MPP.addons.draw.customColor=document.getElementById(\`clr_chng\`).value'>Select color</button></input>
         <input id="line_size"type="range" min="1" max="10" title="brush size" oninput="MPP.addons.draw.brushSize = document.getElementById(\`line_size\`).value"></input></br>
         </div></br>
@@ -620,6 +687,8 @@ if(invsblcrsr){
         <div id="rnbwnt" class="ugly-button" onclick='rainbowmodenote = !rainbowmodenote'>Rainbow notes</div>
         <div id="rnnbwnick" class="ugly-button" onclick='rainbownick = !rainbownick'>Rainbow nick</div>
         <div id="pnospn" class="ugly-button" onclick='pianospinbool = !pianospinbool, pianospn()'>Spin piano</div>
+        <input type="text" id="inp-img" placeholder="Paste image (Image URL)" oninput='url_past_img = document.getElementById(\`inp-img\`).value'><button id="paste_img" onclick='paste_image(url_past_img)'>Paste image</button></input></br>
+        Load image file:</br><input type="file" id="inp-pastimg" oninput='showpreview2(this)'></input>
         </div>
         <div id="ad_block" style="border-radius: 10px; background-color: #171115; border: 2px solid #333; padding: 4px 12px">
         Thanks for using MVPS (◕‿◕✿). Join our discord server: <a target="_blank" href="https://discord.gg/tm6EYtAAmV">https://discord.gg/tm6EYtAAmV<a>
