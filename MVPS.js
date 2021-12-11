@@ -10,6 +10,7 @@
 // @include      *://piano.ourworldofpixels.com/*
 // @include      *://mpp.terrium.net/*
 // @match        *.mpp.hri7566.info/*
+// @match        https://mpp.autoplayer.space/
 // @icon         https://github.com/Hustoroff/mpp/blob/main/icon.png?raw=true
 // @updateURL    https://raw.githubusercontent.com/Hustoroff/mpp/main/MVPS.js
 // @downloadURL  https://raw.githubusercontent.com/Hustoroff/mpp/main/MVPS.js
@@ -648,9 +649,9 @@ img.src = url_past_img;
     }, 33);
     setInterval(function() {
 if(invsblcrsr){
-    MPP.client.sendArray([{m:'m', x: 100000, y: 100000}]);
+    MPP.client.sendArray([{m:'m', x: 10000, y: 10000}]);
     }
-    },12);
+    },16);
     function pianospn(){
     $("#piano").toggleClass("spin", pianospinbool)
     }
