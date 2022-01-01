@@ -56,7 +56,7 @@ setTimeout(adnot, 2000);
 
 MPP.client.on('a', () => {
   const msgElem = $('.message').last();
-  msgElem.html(linkify(msgElem.text()));
+  msgElem.text(linkify(msgElem.text()));
 });
 
 function linkify(text) {
