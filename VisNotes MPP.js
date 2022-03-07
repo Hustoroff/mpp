@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         VisNotes MPP
 // @namespace    http://tampermonkey.net/
-// @version      0.2
+// @version      0.1
 // @description  Visualization of notes (based on Chacha-26 script)
 // @author       Hustandant#8787
 // @match        *://mppclone.com/*
@@ -20,8 +20,15 @@ const canvas = document.createElement("canvas");
     canvas.width = document.getElementById("piano").querySelector("canvas").width;
     canvas.id = "track_of_notes";
     canvas.style.opacity = "1";
+    canvas.style.top = "0";
+    canvas.style.float = "right";
+    canvas.style.position = "fixed";
+    canvas.style.margin = "auto";
+    canvas.style["padding-left"] = "3%";
+    canvas.style["z-index"] = 250;
+
     const ctx = window.ctx = canvas.getContext("2d");
-    const pixel = window.pixel = ctx.createImageData(document.getElementById("piano").querySelector("canvas").width,parseInt(document.getElementById("piano").style["margin-top"]));
+    const pixel = window.pixel = ctx.createImageData(document.getElementById("piano").querySelector("canvas").width,canvas.height);
     pixel.data.fill(0);
     let lastUpdate = 0;
     const noteDB = {};
@@ -49,6 +56,7 @@ const canvas = document.createElement("canvas");
 
     window.showNote = function(note, col, ch = 0) {
         if (note in noteDB) {
+
             lastUpdate = 0;
             const idx = (noteDB[note] + 4) * 4;
             pixel.data[idx + 0] = pixel.data[idx + 4] = pixel.data[idx + 8] = pixel.data[idx + 12] = pixel.data[idx + 16] = pixel.data[idx + 20] = pixel.data[idx + 24] = pixel.data[idx + 28] = col[0];
@@ -57,10 +65,8 @@ const canvas = document.createElement("canvas");
             pixel.data[idx + 3] = pixel.data[idx + 7] = pixel.data[idx + 11] = pixel.data[idx + 15] = pixel.data[idx + 19] = pixel.data[idx + 23] = pixel.data[idx + 27] = pixel.data[idx + 31] = 255;
         }
     }
-    canvas.style.float = "right";
-    canvas.style.position = "fixed";
-    canvas.style.top = "0";
-    document.getElementById("piano").prepend(canvas);
+    document.body.append(canvas);
+    
 
 
 const colcache = Object.create(null);
