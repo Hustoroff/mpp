@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         VisNotes MPP
 // @namespace    http://tampermonkey.net/
-// @version      0.1
+// @version      0.2
 // @description  Visualization of notes (based on Chacha-26 script)
 // @author       Hustandant#8787
 // @match        *://mppclone.com/*
@@ -24,7 +24,7 @@ const canvas = document.createElement("canvas");
     canvas.style.float = "right";
     canvas.style.position = "fixed";
     canvas.style.margin = "auto";
-    canvas.style["padding-left"] = "3%";
+    canvas.style.marginLeft = `${String(document.getElementById("piano").offsetLeft + document.getElementById("piano").getElementsByTagName("canvas")[0].offsetLeft)}px`;
     canvas.style["z-index"] = 250;
 
     const ctx = window.ctx = canvas.getContext("2d");
