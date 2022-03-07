@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         VisNotes MPP
 // @namespace    http://tampermonkey.net/
-// @version      0.1
+// @version      0.2
 // @description  Visualization of notes (based on Chacha-26 script)
 // @author       Hustandant#8787
 // @match        *://mppclone.com/*
@@ -16,12 +16,12 @@
 // ==/UserScript==
 
 const canvas = document.createElement("canvas");
-    canvas.height = 277;
+    canvas.height = parseInt(document.getElementById("piano").style["margin-top"]);
     canvas.width = document.getElementById("piano").querySelector("canvas").width;
     canvas.id = "track_of_notes";
     canvas.style.opacity = "1";
     const ctx = window.ctx = canvas.getContext("2d");
-    const pixel = window.pixel = ctx.createImageData(document.getElementById("piano").querySelector("canvas").width,277);
+    const pixel = window.pixel = ctx.createImageData(document.getElementById("piano").querySelector("canvas").width,parseInt(document.getElementById("piano").style["margin-top"]));
     pixel.data.fill(0);
     let lastUpdate = 0;
     const noteDB = {};
@@ -59,7 +59,7 @@ const canvas = document.createElement("canvas");
     }
     canvas.style.float = "right";
     canvas.style.position = "fixed";
-    canvas.style.top = "3.5ch"
+    canvas.style.top = "0";
     document.getElementById("piano").prepend(canvas);
 
 
