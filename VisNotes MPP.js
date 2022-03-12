@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         VisNotes MPP
 // @namespace    http://tampermonkey.net/
-// @version      0.2
+// @version      0.3
 // @description  Visualization of notes (based on Chacha-26 script)
 // @author       Hustandant#8787
 // @match        *://mppclone.com/*
@@ -42,10 +42,10 @@ const canvas = document.createElement("canvas");
             ctx.globalCompositeOperation = "copy";
             ctx.drawImage(ctx.canvas, 0, -1);
             ctx.globalCompositeOperation = "source-over";
-            ctx.putImageData(pixel, 0, canvas.height - 2);
 
+            ctx.putImageData(pixel, 0, canvas.height - 1);
             if (lastUpdate++ == 0) {
-                pixel.data.fill("");
+                pixel.data.fill();
             }
         }
         requestAnimationFrame(redraw);
@@ -53,21 +53,37 @@ const canvas = document.createElement("canvas");
 
     redraw();
     redraw();
-
+    redraw();
     window.showNote = function(note, col, ch = 0) {
         if (note in noteDB) {
-
             lastUpdate = 0;
-            const idx = (noteDB[note] + 4) * 4;
-            pixel.data[idx + 0] = pixel.data[idx + 4] = pixel.data[idx + 8] = pixel.data[idx + 12] = pixel.data[idx + 16] = pixel.data[idx + 20] = pixel.data[idx + 24] = pixel.data[idx + 28] = col[0];
-            pixel.data[idx + 1] = pixel.data[idx + 5] = pixel.data[idx + 9] = pixel.data[idx + 13] = pixel.data[idx + 17] = pixel.data[idx + 21] = pixel.data[idx + 25] = pixel.data[idx + 29] = col[1];
-            pixel.data[idx + 2] = pixel.data[idx + 6] = pixel.data[idx + 10] = pixel.data[idx + 14] = pixel.data[idx + 18] = pixel.data[idx + 22] = pixel.data[idx + 26] = pixel.data[idx + 30] = col[2];
-            pixel.data[idx + 3] = pixel.data[idx + 7] = pixel.data[idx + 11] = pixel.data[idx + 15] = pixel.data[idx + 19] = pixel.data[idx + 23] = pixel.data[idx + 27] = pixel.data[idx + 31] = 255;
+            const idx = (noteDB[note]) * 4;
+            if(note.split("").includes("s")) {
+                let otS = ((MPP.piano.keys[note].rect.w - Math.round(MPP.piano.renderer.blackBlipWidth))/2)*4;
+                for(let i=0; i<(MPP.piano.renderer.blackBlipWidth)*4; i+=4){
+                    pixel.data[idx + otS + i] = col[0];
+                    pixel.data[idx + otS + i + 1] = col[1];
+                    pixel.data[idx + otS + i + 2] = col[2];
+                    pixel.data[idx + otS + i + 3] = 255;
+                }
+            } else {
+                let ot = ((MPP.piano.keys[note].rect.w - Math.round(MPP.piano.renderer.whiteBlipWidth))/2)*4;
+                for(let i=0; i<(MPP.piano.renderer.whiteBlipWidth)*4; i+=4){
+                    pixel.data[idx + ot + i] = col[0];
+                    pixel.data[idx + ot + i + 1] = col[1];
+                    pixel.data[idx + ot + i + 2] = col[2];
+                    pixel.data[idx + ot + i + 3] = 255;
+                }
+            }
         }
     }
     document.body.append(canvas);
-    
 
+$(window).resize(function() {
+  canvas.height = parseInt(document.getElementById("piano").style["margin-top"]);
+  canvas.width = Number(document.getElementById("piano").querySelector("canvas").style.width.replace(/[a-zа-яё]/gi, ''));
+  canvas.style.marginLeft = `${String(document.getElementById("piano").offsetLeft + document.getElementById("piano").getElementsByTagName("canvas")[0].offsetLeft)}px`;
+})
 
 const colcache = Object.create(null);
 MPP.piano.renderer.__proto__.vis = MPP.piano.renderer.__proto__.visualize;
