@@ -54,6 +54,7 @@ const canvas = document.createElement("canvas");
     redraw();
     redraw();
     redraw();
+
     window.showNote = function(note, col, ch = 0) {
         if (note in noteDB) {
             lastUpdate = 0;
@@ -67,7 +68,7 @@ const canvas = document.createElement("canvas");
                     pixel.data[idx + otS + i + 3] = 255;
                 }
             } else {
-                let ot = ((MPP.piano.keys[note].rect.w - Math.round(MPP.piano.renderer.whiteBlipWidth))/2)*4;
+                let ot = (Math.round((MPP.piano.keys[note].rect.w - Math.round(MPP.piano.renderer.whiteBlipWidth))/2))*4;
                 for(let i=0; i<(MPP.piano.renderer.whiteBlipWidth)*4; i+=4){
                     pixel.data[idx + ot + i] = col[0];
                     pixel.data[idx + ot + i + 1] = col[1];
@@ -77,6 +78,7 @@ const canvas = document.createElement("canvas");
             }
         }
     }
+
     document.body.append(canvas);
 
 $(window).resize(function() {
