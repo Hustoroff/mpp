@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         VisNotes MPP
 // @namespace    http://tampermonkey.net/
-// @version      0.3
+// @version      0.4
 // @description  Visualization of notes (based on Chacha-26 script)
 // @author       Hustandant#8787
 // @match        *://mppclone.com/*
@@ -15,17 +15,26 @@
 // @grant        none
 // ==/UserScript==
 
+MPP.client.emit("notification", {
+		title: "VisNotes MPP script (by Hustandant#8787)",
+        id:"MVPS_notification",
+		duration:20000,
+        target:"#piano",
+        html:`<p><h1>F2 - show/hide notes window</h1></br></p><p><h1>3+d - on/off darkly window</h1></br></p> Join our discord server: <a target="_blank" href="https://discord.gg/A3SDgxS2Q2">https://discord.gg/A3SDgxS2Q2<a>`
+});
+
 const canvas = document.createElement("canvas");
     canvas.height = parseInt(document.getElementById("piano").style["margin-top"]);
-    canvas.width = document.getElementById("piano").querySelector("canvas").width;
+    canvas.width = Math.round(MPP.piano.renderer.width - (MPP.piano.renderer.width - MPP.piano.keys.c7.rect.x2));
     canvas.id = "track_of_notes";
     canvas.style.opacity = "1";
     canvas.style.top = "0";
+    canvas.style.display = "block";
     canvas.style.float = "right";
     canvas.style.position = "fixed";
     canvas.style.margin = "auto";
     canvas.style.marginLeft = `${String(document.getElementById("piano").offsetLeft + document.getElementById("piano").getElementsByTagName("canvas")[0].offsetLeft)}px`;
-    canvas.style["z-index"] = 250;
+    canvas.style["z-index"] = 150;
 
     const ctx = window.ctx = canvas.getContext("2d");
     const pixel = window.pixel = ctx.createImageData(document.getElementById("piano").querySelector("canvas").width,canvas.height);
@@ -83,9 +92,53 @@ const canvas = document.createElement("canvas");
 
 $(window).resize(function() {
   canvas.height = parseInt(document.getElementById("piano").style["margin-top"]);
-  canvas.width = Number(document.getElementById("piano").querySelector("canvas").style.width.replace(/[a-zа-яё]/gi, ''));
+  canvas.width = Math.round(MPP.piano.renderer.width - (MPP.piano.renderer.width - MPP.piano.keys.c7.rect.x2));
   canvas.style.marginLeft = `${String(document.getElementById("piano").offsetLeft + document.getElementById("piano").getElementsByTagName("canvas")[0].offsetLeft)}px`;
-})
+});
+
+window.onload = () => {
+    if(!localStorage.getItem("display")) localStorage.setItem("display", document.getElementById("track_of_notes").style.display);
+    if(!localStorage.getItem("theme")) localStorage.setItem("theme", document.getElementById("track_of_notes").style["background-color"]);
+    document.getElementById("track_of_notes").style.display = localStorage.getItem("display");
+    document.getElementById("track_of_notes").style["background-color"] = localStorage.getItem("theme");
+};
+
+window.addEventListener("keydown", function(key) {
+    if(key.keyCode == "113") {
+        document.getElementById("track_of_notes").style.display = (document.getElementById("track_of_notes").style.display == "block") ? "none" : "block";
+        localStorage.setItem("display", document.getElementById("track_of_notes").style.display);
+        return;
+    }
+});
+
+function runOnKeys(func, ...codes) {
+    let pressed = new Set();
+
+    document.addEventListener('keydown', function(event) {
+    pressed.add(event.key);
+
+        for (let code of codes) {
+          if (!pressed.has(code)) {
+            return;
+          }
+        }
+        pressed.clear();
+        func();
+    });
+
+    document.addEventListener('keyup', function(event) {
+        pressed.delete(event.key);
+    });
+}
+
+    runOnKeys(
+      () => {
+          document.getElementById("track_of_notes").style["background-color"] = (document.getElementById("track_of_notes").style["background-color"] == "rgb(16, 0, 0)") ? "" : "rgb(16, 0, 0)";
+          localStorage.setItem("theme", document.getElementById("track_of_notes").style["background-color"]);
+      },
+      "3",
+      "d"
+    );
 
 const colcache = Object.create(null);
 MPP.piano.renderer.__proto__.vis = MPP.piano.renderer.__proto__.visualize;
