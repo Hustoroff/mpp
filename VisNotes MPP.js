@@ -29,7 +29,7 @@ var noteSpeed = localStorage.getItem("speed"); //default 60 per sec
 
 MPP.client.on("a", function(msg) {
     let message = msg.a.split(" ");
-    if(message[0] == "speed" && msg.p._id == MPP.client.participantId) {
+    if(message[0] == "speed" && msg.p._id == MPP.client.participantId && !isNaN(Number(message[1]))) {
         noteSpeed = (Number(message[1]) > 1000) ? 1000 : (Number(message[1]) <= 0) ? 1 : Number(message[1]);
         localStorage.setItem("speed", noteSpeed);
         MPP.client.emit("notification", {
@@ -47,7 +47,7 @@ MPP.client.emit("notification", {
         id:"Script_notification",
 		duration:20000,
         target:"#piano",
-        html:`<p><h3><font id="f2" color="">F2</font> - show/hide notes window</h3></br></p><p><h3><font id="3d" color="">Tab+3</font> - on/off darkly window</h3></br></p><p><h4><font color="limegreen">${noteSpeed}</font> - current speed (<font color="red">to chat "speed" [min - 1 max - 1000]</font>)</h4></br></p><p><h5>Example: speed 60</h5></br></p> Join our discord server: <a target="_blank" href="https://discord.gg/A3SDgxS2Q2">https://discord.gg/A3SDgxS2Q2<a>`
+        html:`<p><h3><font id="f2" color="">F2</font> - show/hide notes window</h3></br></p><p><h3><font id="3d" color="">Tab+3</font> - on/off darkly window</h3></br></p><p><h4><font color="limegreen">${noteSpeed}</font> - current speed (<span style="background-color: black"><font color="red">to chat "speed" [min - 1 max - 1000]</font></span>)</h4></br></p><p><h5><span style="background-color: black">Example: speed 60</span></h5></br></p> Join our discord server: <a target="_blank" href="https://discord.gg/A3SDgxS2Q2">https://discord.gg/A3SDgxS2Q2<a>`
 });
 
 const canvas = document.createElement("canvas");
