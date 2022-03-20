@@ -29,7 +29,7 @@ var noteSpeed = localStorage.getItem("speed"); //default 60 per sec
 
 MPP.client.on("a", function(msg) {
     let message = msg.a.split(" ");
-    if(message[0] == "speed" && msg.p._id == MPP.client.participantId && !isNaN(Number(message[1]))) {
+    if(message[0] == "speed" && msg.p.id == MPP.client.participantId && !isNaN(Number(message[1]))) {
         noteSpeed = (Number(message[1]) > 1000) ? 1000 : (Number(message[1]) <= 0) ? 1 : Number(message[1]);
         localStorage.setItem("speed", noteSpeed);
         MPP.client.emit("notification", {
@@ -183,6 +183,6 @@ const colcache = Object.create(null);
 MPP.piano.renderer.__proto__.vis = MPP.piano.renderer.__proto__.visualize;
 MPP.piano.renderer.__proto__.visualize = function (n, c, ch) {
   this.vis(n,c,ch);
-  let co = c in colcache ? colcache[c] : Object.freeze(colcache[c] = [c[1]+c[2], c[3]+c[4], c[5]+c[6]].map(x => parseInt(x, 22)));
+  let co = c in colcache ? colcache[c] : Object.freeze(colcache[c] = [c[1]+c[2], c[3]+c[4], c[5]+c[6]].map(x => parseInt(x, 16)));
   showNote(n.note, co);
 };
