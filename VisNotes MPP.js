@@ -24,6 +24,22 @@ const SecondKey = "Tab"; //Tab
 
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
+//var buf = [];
+
+//MPP.client.on("n", function(msg) {
+//    for(let i = 0; i < msg.n.length; i++) {
+//        if(msg.n[i].s == 1) {
+
+          //delete
+
+//        }  else {
+
+          // add
+
+//        }
+//    }
+//}
+
 if(!localStorage.getItem("speed")) localStorage.setItem("speed", 60);
 var noteSpeed = localStorage.getItem("speed"); //default 60 per sec
 
@@ -39,6 +55,16 @@ MPP.client.on("a", function(msg) {
             target:"#chat-input",
             html:`${noteSpeed} - current speed`
         });
+    } else {
+        if(message[0] == "speed" && message.length == 1) {
+            MPP.client.emit("notification", {
+                title: "Speed",
+                id:"Script_notification",
+                duration:2000,
+                target:"#chat-input",
+                html:`${localStorage.getItem("speed")} - current speed`
+            });
+        }
     }
 })
 
@@ -47,7 +73,7 @@ MPP.client.emit("notification", {
         id:"Script_notification",
 		duration:20000,
         target:"#piano",
-        html:`<p><h3><font id="f2" color="">F2</font> - show/hide notes window</h3></br></p><p><h3><font id="3d" color="">Tab+3</font> - on/off darkly window</h3></br></p><p><h4><font color="limegreen">${noteSpeed}</font> - current speed (<span style="background-color: black"><font color="red">to chat "speed" [min - 1 max - 1000]</font></span>)</h4></br></p><p><h5><span style="background-color: black">Example: speed 60</span></h5></br></p> Join our discord server: <a target="_blank" href="https://discord.gg/A3SDgxS2Q2">https://discord.gg/A3SDgxS2Q2<a>`
+        html:`<p><h3><font id="f2" color="">F2</font> - show/hide notes window</h3></br></p><p><h3><font id="3d" color="">Tab+3</font> - on/off darkly window</h3></br></p><p><h4><font color="limegreen">${noteSpeed}</font> - current speed (<span style="background-color: black"><font color="red">to chat "speed" [min - 1 max - 1000]</font></span>)</h4></br></p><p><h5><span style="background-color: black">Example: "speed 60" or "speed" to show speed </span></h5></br></p> Join our discord server: <a target="_blank" href="https://discord.gg/A3SDgxS2Q2">https://discord.gg/A3SDgxS2Q2<a>`
 });
 
 const canvas = document.createElement("canvas");
