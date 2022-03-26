@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         VisNotes MPP
 // @namespace    http://tampermonkey.net/
-// @version      0.5
+// @version      0.6
 // @description  Visualization of notes (based on Chacha-26 script)
 // @author       Hustandant#8787
 // @match        *://mppclone.com/*
@@ -150,8 +150,10 @@ const canvas = document.createElement("canvas");
     document.body.append(canvas);
 
 $(window).resize(function() {
-  canvas.height = parseInt(document.getElementById("piano").style["margin-top"]);
-  canvas.width = Math.round(MPP.piano.renderer.width - (MPP.piano.renderer.width - MPP.piano.keys.c7.rect.x2));
+  canvas.width = canvas.width;
+  canvas.height = canvas.height;
+  canvas.style.width = `${canvas.width / window.devicePixelRatio}px`;
+  canvas.style.height = `${canvas.height / window.devicePixelRatio}px`;
   canvas.style.marginLeft = `${String(document.getElementById("piano").offsetLeft + document.getElementById("piano").getElementsByTagName("canvas")[0].offsetLeft)}px`;
 });
 
