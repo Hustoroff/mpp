@@ -76,7 +76,7 @@ const stat = document.createElement("div");
     stat.style["background-color"] = "rgba(137, 137, 137, 0.414)";
     stat.style["backdrop-filter"] = "blur(1px)";
     stat.style["font-size"] = "21px"
-    stat.innerHTML = `Notes: <span id="notes">0</span> NPS: <span id="nps">0</span> Speed: <span id="nspd">${localStorage.getItem("speed")}</span>`;
+    stat.innerHTML = `Notes: <span id="notes">0</span> NPS: <span id="nps">0</span> Speed: <span id="nspd">${localStorage.getItem("speed")}</span> NQ: <span id="nquota">${MPP.noteQuota.points}</span>`;
     stat.style.marginLeft = `${String(document.getElementById("piano").offsetLeft + document.getElementById("piano").getElementsByTagName("canvas")[0].offsetLeft)}px`;
 
 
@@ -209,10 +209,12 @@ function runOnKeys(func, ...codes) {
     );
 function stats() {
     document.getElementById("notes").innerText = notes;
+    document.getElementById("nquota").innerText = MPP.noteQuota.points;
 }
 
 setInterval(() => {
     document.getElementById('nps').innerText = nps;
+    document.getElementById("nquota").innerText = MPP.noteQuota.points;
     nps = 0;
 }, 1000);
 
