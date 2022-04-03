@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         VisNotes MPP
 // @namespace    http://tampermonkey.net/
-// @version      0.6
+// @version      0.7
 // @description  Visualization of notes (based on Chacha-26 script)
 // @author       Hustandant#8787
 // @match        *://mppclone.com/*
@@ -9,6 +9,7 @@
 // @include      *://multiplayerpiano.com/*
 // @include      *://piano.ourworldofpixels.com/*
 // @include      *://mpp.terrium.net/*
+// @include      *://mppfork.netlify.app/*
 // @match        *.mpp.hri7566.info/*
 // @match        *://mpp.autoplayer.space/*
 // @icon         https://github.com/Hustoroff/mpp/blob/main/icon.png?raw=true
@@ -23,6 +24,9 @@ const FirstKey = "3"; //3
 const SecondKey = "Tab"; //Tab
 
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+var notes = 0;
+var nps = 0;
 
 //var buf = [];
 
@@ -48,33 +52,33 @@ MPP.client.on("a", function(msg) {
     if(message[0] == "speed" && msg.p.id == MPP.client.participantId && !isNaN(Number(message[1]))) {
         noteSpeed = (Number(message[1]) > 1000) ? 1000 : (Number(message[1]) <= 0) ? 1 : Number(message[1]);
         localStorage.setItem("speed", noteSpeed);
-        MPP.client.emit("notification", {
-            title: "Speed",
-            id:"Script_notification",
-            duration:2000,
-            target:"#chat-input",
-            html:`${noteSpeed} - current speed`
-        });
-    } else {
-        if(message[0] == "speed" && message.length == 1) {
-            MPP.client.emit("notification", {
-                title: "Speed",
-                id:"Script_notification",
-                duration:2000,
-                target:"#chat-input",
-                html:`${localStorage.getItem("speed")} - current speed`
-            });
-        }
+        document.getElementById("nspd").innerText = noteSpeed;
     }
-})
+});
 
 MPP.client.emit("notification", {
 		title: "VisNotes MPP script (by Hustandant#8787)",
         id:"Script_notification",
 		duration:20000,
         target:"#piano",
-        html:`<p><h3><font id="f2" color="">F2</font> - show/hide notes window</h3></br></p><p><h3><font id="3d" color="">Tab+3</font> - on/off darkly window</h3></br></p><p><h4><font color="limegreen">${noteSpeed}</font> - current speed (<span style="background-color: black"><font color="red">to chat "speed" [min - 1 max - 1000]</font></span>)</h4></br></p><p><h5><span style="background-color: black">Example: "speed 60" or "speed" to show speed </span></h5></br></p> Join our discord server: <a target="_blank" href="https://discord.gg/A3SDgxS2Q2">https://discord.gg/A3SDgxS2Q2<a>`
+        html:`<p><h3><font id="f2" color="">F2</font> - show/hide notes window</h3></br></p><p><h3><font id="3d" color="">Tab+3</font> - on/off darkly window</h3></br></p><p><h4><font color="limegreen">${noteSpeed}</font> - current speed (<span style="background-color: black"><font color="red">to chat "speed" [min - 1 max - 1000]</font></span>)</h4></br></p><p><h5><span style="background-color: black">Example: "speed 60"</span></h5></br></p> Join our discord server: <a target="_blank" href="https://discord.gg/A3SDgxS2Q2">https://discord.gg/A3SDgxS2Q2<a>`
 });
+
+const stat = document.createElement("div");
+    stat.id = "stat_notes";
+    stat.style.opacity = "1";
+    stat.style.position = "fixed";
+    stat.style["z-index"] = 150;
+    stat.style.display = "block";
+    stat.style.float = "right";
+    stat.style.margin = "auto";
+    stat.style.top = `${document.getElementById("piano").height}px`;
+    stat.style["background-color"] = "rgba(137, 137, 137, 0.414)";
+    stat.style["backdrop-filter"] = "blur(1px)";
+    stat.style["font-size"] = "21px"
+    stat.innerHTML = `Notes: <span id="notes">0</span> NPS: <span id="nps">0</span> Speed: <span id="nspd">${localStorage.getItem("speed")}</span>`;
+    stat.style.marginLeft = `${String(document.getElementById("piano").offsetLeft + document.getElementById("piano").getElementsByTagName("canvas")[0].offsetLeft)}px`;
+
 
 const canvas = document.createElement("canvas");
     canvas.height = parseInt(document.getElementById("piano").style["margin-top"]);
@@ -148,6 +152,7 @@ const canvas = document.createElement("canvas");
     }
 
     document.body.append(canvas);
+    document.body.append(stat);
 
 $(window).resize(function() {
   canvas.width = canvas.width;
@@ -183,11 +188,7 @@ function runOnKeys(func, ...codes) {
     document.addEventListener('keydown', function(event) {
     pressed.add(event.key);
 
-        for (let code of codes) {
-          if (!pressed.has(code)) {
-            return;
-          }
-        }
+        for (let code of codes) if (!pressed.has(code)) return;
         pressed.clear();
         func();
     });
@@ -206,10 +207,21 @@ function runOnKeys(func, ...codes) {
       FirstKey,
       SecondKey
     );
+function stats() {
+    document.getElementById("notes").innerText = notes;
+}
+
+setInterval(() => {
+    document.getElementById('nps').innerText = nps;
+    nps = 0;
+}, 1000);
 
 const colcache = Object.create(null);
 MPP.piano.renderer.__proto__.vis = MPP.piano.renderer.__proto__.visualize;
 MPP.piano.renderer.__proto__.visualize = function (n, c, ch) {
+  notes += 1;
+  nps += 1;
+    stats();
   this.vis(n,c,ch);
   let co = c in colcache ? colcache[c] : Object.freeze(colcache[c] = [c[1]+c[2], c[3]+c[4], c[5]+c[6]].map(x => parseInt(x, 16)));
   showNote(n.note, co);
