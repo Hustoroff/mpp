@@ -212,10 +212,13 @@ function stats() {
     document.getElementById("nquota").innerText = MPP.noteQuota.points;
 }
 
+function grad(nq, nqmax) { document.getElementById("nquota").style.color = `rgb(255, ${Math.round((nq/nqmax)*255)}, ${Math.round((nq/nqmax)*255)})` };
+
 setInterval(() => {
     document.getElementById('nps').innerText = nps;
     document.getElementById("nquota").innerText = MPP.noteQuota.points;
     nps = 0;
+    grad(MPP.noteQuota.points, MPP.noteQuota.max);
 }, 1000);
 
 const colcache = Object.create(null);
@@ -224,6 +227,7 @@ MPP.piano.renderer.__proto__.visualize = function (n, c, ch) {
   notes += 1;
   nps += 1;
     stats();
+    grad(MPP.noteQuota.points, MPP.noteQuota.max);
   this.vis(n,c,ch);
   let co = c in colcache ? colcache[c] : Object.freeze(colcache[c] = [c[1]+c[2], c[3]+c[4], c[5]+c[6]].map(x => parseInt(x, 16)));
   showNote(n.note, co);
