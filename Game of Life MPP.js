@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Game of Life MPP
 // @namespace    http://tampermonkey.net/
-// @version      0.1
+// @version      0.2
 // @description  John Conway’s Game of Life in MPP ¯\_(ツ)_/¯
 // @author       Hustandant#8787
 // @match        *://mppclone.com/*
@@ -16,7 +16,7 @@
 // @grant        none
 // ==/UserScript==
 
-var mashtab = 10, matr = [], indstrt = false, webBool = false, delay = 0.5, f = 0, setTime;
+var mashtab = 10, matr = [], indstrt = false, webBool = false, delay = 0.5, f = 0, LifeC = 0, setTime;
 
 MPP.client.on("a", function(msg) {
     let message = msg.a.split(" ");
@@ -46,7 +46,7 @@ statGM.style.top = `${document.getElementById("piano").height}px`;
 statGM.style["background-color"] = "rgba(137, 137, 137, 0.414)";
 statGM.style["backdrop-filter"] = "blur(1px)";
 statGM.style["font-size"] = "21px"
-statGM.innerHTML = `<span id="start">Start (F2)</span>, Delay: <span id="delay">${delay}</span>`;
+statGM.innerHTML = `<span id="start">Start (F2)</span>, Delay: <span id="delay">${delay}</span>, Сells: <span id="LifeC">0</span>, FPS: <span id="fps">0</span>`;
 statGM.style.marginLeft = `${String(document.getElementById("piano").offsetLeft + document.getElementById("piano").getElementsByTagName("canvas")[0].offsetLeft)}px`;
 
 const canvas = document.createElement("canvas");
@@ -61,10 +61,26 @@ canvas.style.position = "fixed";
 canvas.style.margin = "auto";canvas.style["z-index"] = 200;
 canvas.style["background-color"] = "black";
 
-
 const ctx = window.ctx = canvas.getContext("2d");
 
+const canvas_web = document.createElement("canvas");
+
+canvas_web.height = parseInt(document.getElementById("piano").style["margin-top"]),
+canvas_web.width = window.innerWidth;
+canvas_web.id = "canv_web";
+canvas_web.style.opacity = "1";
+canvas_web.style.top = "0";
+canvas_web.style.display =  "none";
+canvas_web.style.float = "right";
+canvas_web.style.position = "fixed";
+canvas_web.style.margin = "auto";
+canvas_web.style["pointer-events"] = "none";
+canvas_web.style["z-index"] = 201;
+
+const ctx_web = window.ctx = canvas_web.getContext("2d");
+
 document.body.append(canvas);
+document.body.append(canvas_web);
 document.body.append(statGM);
 
 window.addEventListener("keyup", function (key) {
@@ -77,6 +93,17 @@ function start() {
     if (indstrt) scanCanvas();
 };
 
+setInterval(() => {
+    document.getElementById("fps").innerText = f;
+    f = 0;
+}, 1e3);
+window.requestAnimationFrame(fps);
+
+function fps() {
+    f++;
+    window.requestAnimationFrame(fps);
+};
+
 function clearSpace() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     for (var i = 0; i < Math.floor(canvas.height / mashtab); i++) {
@@ -87,13 +114,24 @@ function clearSpace() {
         }
     }
     drawRect();
-    if(webBool) drawWeb();
 };
 
 function web() {
     webBool = !webBool;
-    drawWeb();
+    canvas_web.style.display = webBool ? "block" : "none";
 };
+
+function drawWeb() {
+    for (let i = 0; i < Math.floor(canvas_web.height / mashtab); i ++) {
+        for (let j = 0; j < Math.floor(canvas_web.width / mashtab); j ++) {
+            ctx_web.strokeStyle = "white";
+            ctx_web.lineWidth = "0.2";
+            ctx_web.strokeRect(j * mashtab, i * mashtab, 10, 10);
+        }
+    }
+};
+
+drawWeb();
 
 function matrDraw() {
     for (var i = 0; i < Math.floor(canvas.height / mashtab); i++) {
@@ -105,6 +143,19 @@ function matrDraw() {
 };
 
 matrDraw();
+
+function drawRect() {
+    LifeC = 0;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    for (var i = 0; i < Math.floor(canvas.height / mashtab); i++) {
+        for (var j = 0; j < Math.floor(canvas.width / mashtab); j++) {
+            ctx.fillStyle = matr[i][j] == 1 ? "white" : "black";
+            ctx.fillRect(j * mashtab, i * mashtab, 10, 10);
+            if(matr[i][j] == 1) LifeC++;
+        }
+    }
+    document.getElementById("LifeC").innerText = LifeC;
+};
 
 canvas.onclick = function(event) {
     if (!indstrt && !event.ctrlKey) {
@@ -130,36 +181,9 @@ canvas.onmousemove = (event) => {
     }
 };
 
-function drawRect() {
-    let LifeC = 0;
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    for (var i = 0; i < Math.floor(canvas.height / mashtab); i++) {
-        for (var j = 0; j < Math.floor(canvas.width / mashtab); j++) {
-            ctx.fillStyle = matr[i][j] == 1 ? "white" : "black";
-            ctx.fillRect(j * mashtab, i * mashtab, 10, 10);
-            if(matr[i][j] == 1) LifeC++;
-        }
-    }
-    if(webBool) drawWeb();
-};
-
-function drawWeb() {
-    if(webBool) {
-        for (let i = 0; i < Math.floor(canvas.height / mashtab); i ++) {
-            for (let j = 0; j < Math.floor(canvas.width / mashtab); j ++) {
-                ctx.strokeStyle = webBool ? "white" : "black";
-                ctx.lineWidth = webBool ? "0.2" : "1";
-                ctx.strokeRect(j * mashtab, i * mashtab, 10, 10);
-            }
-        }
-    } else {
-        drawRect();
-    }
-};
-
 function scanCanvas(step) {
     if(indstrt){
-        let LifeC = 0;
+        LifeC = 0;
         var arr = [];
         for (var i = 0; i < Math.floor(canvas.height / mashtab); i++) {
             arr[i] = [];
@@ -178,6 +202,7 @@ function scanCanvas(step) {
             }
         }
         matr = arr;
+        document.getElementById("LifeC").innerText = LifeC;
         drawRect();
         setTime = setTimeout(scanCanvas, delay*1000);
     }
