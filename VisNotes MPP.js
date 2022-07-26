@@ -1,48 +1,37 @@
 // ==UserScript==
 // @name         VisNotes MPP
 // @namespace    http://tampermonkey.net/
-// @version      0.7
+// @version      0.8
 // @description  Visualization of notes (based on Chacha-26 script)
 // @author       Hustandant#8787
 // @match        *://mppclone.com/*
-// @include      *://www.multiplayerpiano.com/*
 // @include      *://multiplayerpiano.com/*
-// @include      *://piano.ourworldofpixels.com/*
-// @include      *://mpp.terrium.net/*
 // @include      *://mppfork.netlify.app/*
-// @match        *.mpp.hri7566.info/*
-// @match        *://mpp.autoplayer.space/*
 // @icon         https://github.com/Hustoroff/mpp/blob/main/icon.png?raw=true
 // @grant        none
+// @license MIT
 // ==/UserScript==
 
-//+++++++++++++++++++++++++ You can change this +++++++++++++++++++++++++
+//++++++++++++++++++ You can change this (Hot keys) ++++++++++++++++++++
 
-// Hot keys
 const OnOff = "113"; //F2
 const FirstKey = "3"; //3
 const SecondKey = "Tab"; //Tab
 
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-var notes = 0;
-var nps = 0;
+var notes = 0, nps = 0, fps = 0;
 
-//var buf = [];
+async function ping() {
+  let start = Date.now();
+  try { await fetch(`${window.location.protocol}${MPP.client.uri.slice(4)}`) }
+  catch(err) {}
+  return (Date.now() - start);
+};
 
-//MPP.client.on("n", function(msg) {
-//    for(let i = 0; i < msg.n.length; i++) {
-//        if(msg.n[i].s == 1) {
+function fpsCount() { fps += 1; requestAnimationFrame(fpsCount) };
 
-          //delete
-
-//        }  else {
-
-          // add
-
-//        }
-//    }
-//}
+requestAnimationFrame(fpsCount);
 
 if(!localStorage.getItem("speed")) localStorage.setItem("speed", 60);
 var noteSpeed = localStorage.getItem("speed"); //default 60 per sec
@@ -76,7 +65,7 @@ const stat = document.createElement("div");
     stat.style["background-color"] = "rgba(137, 137, 137, 0.414)";
     stat.style["backdrop-filter"] = "blur(1px)";
     stat.style["font-size"] = "21px"
-    stat.innerHTML = `Notes: <span id="notes">0</span> NPS: <span id="nps">0</span> Speed: <span id="nspd">${localStorage.getItem("speed")}</span> NQ: <span id="nquota">${MPP.noteQuota.points}</span>`;
+    stat.innerHTML = `Notes: <span id="notes">0</span> NPS: <span id="nps">0</span> Speed: <span id="nspd">${localStorage.getItem("speed")}</span> NQ: <span id="nquota">${MPP.noteQuota.points}</span> Ping: <span id="ping"></span> FPS: <span id="fps"></span>`;
     stat.style.marginLeft = `${String(document.getElementById("piano").offsetLeft + document.getElementById("piano").getElementsByTagName("canvas")[0].offsetLeft)}px`;
 
 
@@ -96,12 +85,10 @@ const canvas = document.createElement("canvas");
     const ctx = window.ctx = canvas.getContext("2d");
     const pixel = window.pixel = ctx.createImageData(document.getElementById("piano").querySelector("canvas").width,canvas.height);
     pixel.data.fill(0);
-    let lastUpdate = 0;
+    let lastUpdate = 0, onlyevery = 4, counter = 0, prevTime = Date.now();
     const noteDB = {};
 
     Object.keys(MPP.piano.keys).forEach(key => noteDB[key] = MPP.piano.keys[key].rect.x);
-    let onlyevery = 4, counter = 0;
-    let prevTime = Date.now();
 
     window.redraw = function() {
         if (lastUpdate <= canvas.height && counter++ % 4 == 0) {
@@ -123,9 +110,9 @@ const canvas = document.createElement("canvas");
     };
 
     redraw();
-    redraw();
-    redraw();
-    redraw();
+    redraw(); // :)
+    redraw(); // :)
+    redraw(); // :)
 
     window.showNote = function(note, col, ch = 0) {
         if (note in noteDB) {
@@ -154,13 +141,15 @@ const canvas = document.createElement("canvas");
     document.body.append(canvas);
     document.body.append(stat);
 
-$(window).resize(function() {
+window.addEventListener('resize', resize);
+
+function resize() {
   canvas.width = canvas.width;
   canvas.height = canvas.height;
   canvas.style.width = `${canvas.width / window.devicePixelRatio}px`;
   canvas.style.height = `${canvas.height / window.devicePixelRatio}px`;
   canvas.style.marginLeft = `${String(document.getElementById("piano").offsetLeft + document.getElementById("piano").getElementsByTagName("canvas")[0].offsetLeft)}px`;
-});
+};
 
 window.onload = () => {
     if(!localStorage.getItem("display")) localStorage.setItem("display", document.getElementById("track_of_notes").style.display);
@@ -186,20 +175,17 @@ function runOnKeys(func, ...codes) {
     let pressed = new Set();
 
     document.addEventListener('keydown', function(event) {
-    pressed.add(event.key);
+        pressed.add(event.key);
 
         for (let code of codes) if (!pressed.has(code)) return;
         pressed.clear();
         func();
     });
 
-    document.addEventListener('keyup', function(event) {
-        pressed.delete(event.key);
-    });
+    document.addEventListener('keyup', function(event) { pressed.delete(event.key) });
 };
 
-    runOnKeys(
-      () => {
+    runOnKeys(() => {
           document.getElementById("track_of_notes").style["background-color"] = (document.getElementById("track_of_notes").style["background-color"] == "rgb(16, 0, 0)") ? "" : "rgb(16, 0, 0)";
           localStorage.setItem("theme", document.getElementById("track_of_notes").style["background-color"]);
           document.getElementById("3d").color = (localStorage.getItem("theme") == "rgb(16, 0, 0)") ? "limegreen" : "firebrick";
@@ -207,17 +193,16 @@ function runOnKeys(func, ...codes) {
       FirstKey,
       SecondKey
     );
-function stats() {
-    document.getElementById("notes").innerText = notes;
-    document.getElementById("nquota").innerText = MPP.noteQuota.points;
-}
+function stats() { document.getElementById("notes").innerText = notes; document.getElementById("nquota").innerText = MPP.noteQuota.points };
 
 function grad(nq, nqmax) { document.getElementById("nquota").style.color = `rgb(255, ${Math.round((nq/nqmax)*255)}, ${Math.round((nq/nqmax)*255)})` };
 
-setInterval(() => {
-    document.getElementById('nps').innerText = nps;
+setInterval(async () => {
+    document.getElementById("nps").innerText = nps;
     document.getElementById("nquota").innerText = MPP.noteQuota.points;
-    nps = 0;
+    document.getElementById("ping").innerText = await ping();
+    document.getElementById("fps").innerText = fps;
+    fps = nps = 0;
     grad(MPP.noteQuota.points, MPP.noteQuota.max);
 }, 1000);
 
