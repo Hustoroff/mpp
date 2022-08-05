@@ -16,5 +16,10 @@
 // @grant        none
 // ==/UserScript==
 
-$(window).focus(function() { MPP.client.sendArray([{m: "userset", set: {name: `${MPP.client.getOwnParticipant().name}` }}]); }); //you are in the tab
-$(window).blur(function() { MPP.client.sendArray([{m: "userset", set: {name: `${MPP.client.getOwnParticipant().name} AFK` }}]); }); //you are in another tab
+--------------------------------------
+const nameNotAFK = ''; //your nickname when you are afk.
+const nameAFK = ''; //your nickname when you aren't afk.
+--------------------------------------
+
+$(window).focus(function() { MPP.client.sendArray([{m: "userset", set: {name: nameNotAFK }}]); }); //you are in the tab
+$(window).blur(function() { MPP.client.sendArray([{m: "userset", set: {name: nameAFK }}]); }); //you are in another tab
