@@ -3,13 +3,14 @@
 // @namespace    http://tampermonkey.net/
 // @version      0.5
 // @description  MVPS [Multi Visual Piano Script] designed to expand the technical and visual capabilities of the MPP
-// @author       Hustandant#8787
+// @author       Hustandant#1917
 // @match        *://mppclone.com/*
 // @include      *://www.multiplayerpiano.com/*
 // @include      *://multiplayerpiano.com/*
 // @include      *://piano.ourworldofpixels.com/*
 // @include      *://mpp.terrium.net/*
 // @match        *.mpp.hri7566.info/*
+// @match        *://mpp-terrium2.glitch.me/*
 // @match        https://mpp.autoplayer.space/
 // @icon         https://github.com/Hustoroff/mpp/blob/main/icon.png?raw=true
 // @updateURL    https://raw.githubusercontent.com/Hustoroff/mpp/main/MVPS.js
@@ -21,7 +22,7 @@
 function adnot(){
 MPP.client.emit("notification", {
 
-		title: "Multi Visual Piano Script (by Hustandant#8787)",
+		title: "Multi Visual Piano Script (by Hustandant#1917)",
         id:"MVPS_notification",
 		duration:8000,
         target:"#chat-input",
@@ -48,34 +49,7 @@ function playSound_2(url) {
   audio.play();
 }
 
-setTimeout(adnot, 2000);
-
-
-
-// MPP tools script by Jacob [https://greasyfork.org/ru/users/779512-jakob] (thx a lot :3)
-
-MPP.client.on('a', () => {
-  const msgElem = $('.message').last();
-  msgElem.text(linkify(msgElem.text()));
-});
-
-function linkify(text) {
-  let replacedText;
-
-  // URLs starting with http://, https://, or ftp://
-  const replacePattern1 = /(\b(https?|ftp):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gim;
-  replacedText = text.replace(replacePattern1, '<a href="$1" target="_blank">$1</a>');
-
-  // URLs starting with "www." (without // before it, or it'd re-link the ones done above).
-  const replacePattern2 = /(^|[^\/])(www\.[\S]+(\b|$))/gim;
-  replacedText = replacedText.replace(replacePattern2, '$1<a href="http://$2" target="_blank">$2</a>');
-
-  // Change email addresses to mailto:: links.
-  const replacePattern3 = /(([a-zA-Z0-9\-\_\.])+@[a-zA-Z\_]+?(\.[a-zA-Z]{2,6})+)/gim;
-  replacedText = replacedText.replace(replacePattern3, '<a href="mailto:$1">$1</a>');
-
-  return replacedText;
-}
+setTimeout(adnot, 500);
 
 // DRAW script by Hri7566 [https://github.com/Hri7566] (thx a lot :3)
 EXT = window.EXT || {_initfunc: []};
@@ -257,105 +231,6 @@ EXT._initfunc.push(function(){
     });
 });
 
-// Visualization of notes script by Chacha-26 [chacha-26@protonmail.com] (thx a lot :3)
-
-const canvas = document.createElement("canvas");
-    canvas.height = 128 * 2;
-    canvas.width = window.innerWidth;
-
-    canvas.id = "track_of_notes";
-    canvas.style = "opacity: 0;";
-    const ctx = window.ctx = canvas.getContext("2d");
-    const pixel = window.pixel = ctx.createImageData(1,128*2);
-    pixel.data.fill(0);
-    let lastUpdate = 0;
-    $("#track_of_notes").css({ })
-    const noteDB = Object.freeze({
-        __proto__: null,
-        'c-2':  0, 'cs-2':  1, 'd-2':  2, 'ds-2':  3, 'e-2':  4, 'f-2':  5, 'fs-2':  6, 'g-2':  7, 'gs-2':  8, 'a-2':  9, 'as-2': 10, 'b-2': 11,
-        'c-1': 12, 'cs-1': 13, 'd-1': 14, 'ds-1': 15, 'e-1': 16, 'f-1': 17, 'fs-1': 18, 'g-1': 19, 'gs-1': 20, 'a-1': 21, 'as-1': 22, 'b-1': 23,
-        c0: 24, cs0: 25, d0: 26, ds0: 27, e0: 28, f0: 29, fs0: 30, g0: 31, gs0: 32, a0: 33, as0: 34, b0: 35,
-        c1: 36, cs1: 37, d1: 38, ds1: 39, e1: 40, f1: 41, fs1: 42, g1: 43, gs1: 44, a1: 45, as1: 46, b1: 47,
-        c2: 48, cs2: 49, d2: 50, ds2: 51, e2: 52, f2: 53, fs2: 54, g2: 55, gs2: 56, a2: 57, as2: 58, b2: 59,
-        c3: 60, cs3: 61, d3: 62, ds3: 63, e3: 64, f3: 65, fs3: 66, g3: 67, gs3: 68, a3: 69, as3: 70, b3: 71,
-        c4: 72, cs4: 73, d4: 74, ds4: 75, e4: 76, f4: 77, fs4: 78, g4: 79, gs4: 80, a4: 81, as4: 82, b4: 83,
-        c5: 84, cs5: 85, d5: 86, ds5: 87, e5: 88, f5: 89, fs5: 90, g5: 91, gs5: 92, a5: 93, as5: 94, b5: 95,
-        c6: 96, cs6: 97, d6: 98, ds6: 99, e6: 100, f6: 101, fs6: 102, g6: 103, gs6: 104, a6: 105, as6: 106, b6: 107,
-        c7: 108, cs7: 109, d7: 110, ds7: 111, e7: 112, f7: 113, fs7: 114, g7: 115, gs7: 116, a7: 117, as7: 118, b7: 119, c8: 120,
-        cs8: 121, d8: 122, ds8: 123, e8: 124, f8: 125, fs8: 126, g8: 127
-    });
-
-    let onlyevery = 4, counter = 0;
-
-    window.redraw = function() {
-        if (lastUpdate <= canvas.width && counter++ % 4 == 0) {
-
-            const lo = noteDB['gs-1'] * 8 + 4;
-            const hi = noteDB['c7'] * 8;
-
-            ctx.globalCompositeOperation = "copy";
-            ctx.drawImage(ctx.canvas, -2, 0);
-            // reset back to normal for subsequent operations.
-            ctx.globalCompositeOperation = "source-over";
-
-            pixel.data[0] = pixel.data[1] = pixel.data[2] = 0;
-            pixel.data[3] = 255;
-
-            pixel.data[lo] = pixel.data[lo+1] = pixel.data[lo+2] = 0;
-            pixel.data[lo+3] = 255;
-
-            pixel.data[hi] = pixel.data[hi+1] = pixel.data[hi+2] = 0;
-            pixel.data[hi+3] = 255;
-
-            pixel.data[1020] = pixel.data[1021] = pixel.data[1022] = 0;
-            pixel.data[1023] = 255;
-
-            ctx.putImageData(pixel, canvas.width - 1, 0);
-            ctx.putImageData(pixel, canvas.width - 2, 0);
-
-            if (lastUpdate++ == 0) {
-                pixel.data.fill(0x7f);
-            }
-        }
-        requestAnimationFrame(redraw);
-    };
-
-    redraw();
-
-    window.showNote = function(note, col, ch = 0) {
-        if (note in noteDB) {
-            lastUpdate = 0;
-            const idx = (127 - noteDB[note]) * 8;
-            pixel.data[idx + 0] = pixel.data[idx + 4] = col[0];
-            pixel.data[idx + 1] = pixel.data[idx + 5] = col[1];
-            pixel.data[idx + 2] = pixel.data[idx + 6] = col[2];
-            pixel.data[idx + 3] = pixel.data[idx + 7] = 255;
-        }
-    }
-
-    /*window.canvastest = new Popup({
-        id: "canvastest",
-        title: "canvas test",
-        text: canvas,
-        target: "body",
-        align: "right",
-        pinned: "true",
-    });*/
-    canvas.style.float = "right";
-    canvas.style.position = "fixed";
-    canvas.style.top = "3.5ch"
-    document.body.appendChild(canvas);
-
-
-const colcache = Object.create(null);
-MPP.piano.renderer.__proto__.vis = MPP.piano.renderer.__proto__.visualize;
-MPP.piano.renderer.__proto__.visualize = function (n, c, ch) {
-  this.vis(n,c,ch);
-  let co = c in colcache ? colcache[c] : Object.freeze(colcache[c] = [c[1]+c[2], c[3]+c[4], c[5]+c[6]].map(x => parseInt(x, 16)));
-  showNote(n.note, co);
-}
-
-
 //Rainbow room mode script
 var count = 0;
 var size = 100;
@@ -386,7 +261,7 @@ function sin_to_hex(i, phase) {
 
 
 $("#bottom .relative").append(`<div id="MVPS" class="ugly-button 2_btn">MVPS</div>`);
-$("#MVPS").css({position: "absolute", left: "780px", top: "32px"}).on("click", () => {
+$("#MVPS").css({position: "absolute", left: "1020px", top: "32px"}).on("click", () => {
     var MVPS_not = false;
     MVPS_not =!MVPS_not
     if(MVPS_not){
@@ -489,17 +364,6 @@ img.addEventListener('load', function(){
 img.src = url_past_img;
 }
 
-
-
-        function pc_sheet_wind(){
-         if(pc_wind){
-         $("#chat").append(\`<textarea id="pc-wind" autocomplete="off" placeholder="Your sheet here..." ></textarea>\`);
-         $("#pc-wind").css({resize: "none", height: "266px", width: window.innerWidth, overflow:"hidden", "border-radius": "8px"})
-         }
-         else{
-         $("#pc-wind").remove()
-         }}
-
          function background_del(){
      if(backg){
         var d=document.createElement('div');
@@ -518,35 +382,9 @@ img.src = url_past_img;
     }
     }
 
-    function piano_delete(){
-     if(piano){
-         $("#piano").css({opacity: "1"})
-     }
-    else{
-    $("#piano").css({opacity: "0"})
-    }
-    }
 
     function chat_clear(){
      $('ul').empty();
-    }
-
-    function chat_hde(){
-    if(chat_hide){
-    $('ul').css({opacity: "0"});
-    }
-    else{
-    $('ul').css({opacity: "1"});
-    }
-    }
-
-    function cursor_hde(){
-    if(cursor_hide){
-    $('#cursors').css({opacity: "0"});
-    }
-    else{
-    $('#cursors').css({opacity: "1"});
-    }
     }
 
     function names_hde(){
@@ -662,10 +500,7 @@ if(invsblcrsr){
 
         <div id="visual_block" style="border-radius: 10px; background-color: #171115; border: 2px solid #333; padding: 4px 12px">
         <h3>Visual:</h3></p>
-        <div id="pianodel" class="ugly-button" onclick='piano = !piano, piano_delete();'>Piano deleter</div>
         <div id="cht-clr" class="ugly-button" onclick='chat_clear()'>Clear chat</div>
-        <div id="cht-hdn" class="ugly-button" onclick='chat_hide=!chat_hide, chat_hde()'>Hide chat</div>
-        <div id="crsr-hdn" class="ugly-button" onclick='cursor_hide=!cursor_hide, cursor_hde()'>Hide cursor</div>
         <div id="nms-hdn" class="ugly-button" onclick='names_hide=!names_hide, names_hde()'>Hide names</div>
         <input type="text" id="inp-back" placeholder="New backround (Image URL)" oninput='url_back = document.getElementById(\`inp-back\`).value'><button id="back" onclick='backg = !backg, background_del();'>Background</button></input></br>
         Load background file:<input type="file" id="inp-backimg" oninput='showpreview1(this)'></input>
@@ -681,8 +516,6 @@ if(invsblcrsr){
         </div></br>
         <div id="other_block" style="border-radius: 10px; background-color: #171115; border: 2px solid #333; padding: 4px 12px">
         <h3>Other settings:</h3>
-        <div id="pc-btn" class="ugly-button" onclick='pc_wind = !pc_wind, pc_sheet_wind()'>PC sheet</div>
-        <div id="visnote-clr" class="ugly-button" onclick='visnoted = !visnoted, visnote_hde()'>Visual notes</div>
         <div id="invsblcrsr" class="ugly-button" onclick="invsblcrsr = !invsblcrsr">Invisible cursor</div>
         <div id="rnbw" class="ugly-button" onclick='rainbowmode = !rainbowmode' title="ANIME!?!?!??!?!?!??!?!??!?!">Rainbow room</div>
         <div id="rnbwnt" class="ugly-button" onclick='rainbowmodenote = !rainbowmodenote'>Rainbow notes</div>
