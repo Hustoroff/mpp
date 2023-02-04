@@ -1,17 +1,18 @@
 // ==UserScript==
 // @name         VisNotes MPP
 // @namespace    http://tampermonkey.net/
-// @version      0.8
+// @version      0.9
 // @description  Visualization of notes (based on Chacha-26 script)
-// @author       Hustandant#8787
+// @author       Hustandant#1917
 // @match        *://mppclone.com/*
-// @include      *://multiplayerpiano.com/*
-// @include      *://mppfork.netlify.app/*
+// @match        *://mpp.hyye.tk/*
+// @match        *://multiplayerpiano.com/*
+// @match        *://mppfork.netlify.app/*
 // @icon         https://github.com/Hustoroff/mpp/blob/main/icon.png?raw=true
 // @grant        none
-// @license MIT
+// @license      MIT
 // ==/UserScript==
-
+window.addEventListener('DOMContentLoaded', (event) => {
 //++++++++++++++++++ You can change this (Hot keys) ++++++++++++++++++++
 
 const OnOff = "113"; //F2
@@ -46,7 +47,7 @@ MPP.client.on("a", function(msg) {
 });
 
 MPP.client.emit("notification", {
-		title: "VisNotes MPP script (by Hustandant#8787)",
+		title: "VisNotes MPP script (by Hustandant#1917)",
         id:"Script_notification",
 		duration:20000,
         target:"#piano",
@@ -217,3 +218,4 @@ MPP.piano.renderer.__proto__.visualize = function (n, c, ch) {
   let co = c in colcache ? colcache[c] : Object.freeze(colcache[c] = [c[1]+c[2], c[3]+c[4], c[5]+c[6]].map(x => parseInt(x, 16)));
   showNote(n.note, co);
 };
+});
