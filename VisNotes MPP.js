@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         VisNotes MPP
 // @namespace    http://tampermonkey.net/
-// @version      0.9
+// @version      0.9.3
 // @description  Visualization of notes (based on Chacha-26 script)
 // @author       Hustandant#1917
 // @match        *://mppclone.com/*
@@ -11,8 +11,9 @@
 // @icon         https://github.com/Hustoroff/mpp/blob/main/icon.png?raw=true
 // @grant        none
 // @license      MIT
+// @run-at       document-end
 // ==/UserScript==
-window.addEventListener('DOMContentLoaded', (event) => {
+window.addEventListener('load', (event) => {
 //++++++++++++++++++ You can change this (Hot keys) ++++++++++++++++++++
 
 const OnOff = "113"; //F2
