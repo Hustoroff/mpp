@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         MVPS
 // @namespace    http://tampermonkey.net/
-// @version      0.7
+// @version      0.8
 // @description  MVPS [Multi Visual Piano Script] designed to expand the technical and visual capabilities of the MPP
 // @author       Hustandant#1917
 // @match        *://mppclone.com/*
@@ -16,8 +16,9 @@
 // @downloadURL  https://raw.githubusercontent.com/Hustoroff/mpp/main/MVPS.js
 // @resource     https://raw.githubusercontent.com/Hustoroff/mpp/main/MVPS.js
 // @grant        none
+// @run-at       document-end
 // ==/UserScript==
-window.addEventListener('DOMContentLoaded', (event) => {
+window.addEventListener('load', (event) => {
 $("#bottom .relative").append(`<div id="MVPS" class="ugly-button 2_btn">MVPS</div>`);
 $("#MVPS").css({position: "absolute", left: "1020px", top: "32px"}).on("click", () => {
     MPP.client.emit("notification", {
@@ -147,20 +148,25 @@ $("#MVPS").css({position: "absolute", left: "1020px", top: "32px"}).on("click", 
     }
 
     // DRAW script by Hri7566 [https://github.com/Hri7566] (thx a lot :3)
+    let authenicated = false;
     EXT = window.EXT || {_initfunc: []};
-    window.onload = function(){
-        MPP = MPP || {};
-        MPP.addons = EXT;
-        for(var x = EXT._initfunc.length; x--;)
-        EXT._initfunc[x]();
-        EXT.__proto__ = null;
-    };
 
+    setInterval(()=>{
+        if(Object.entries(MPP.client.ppl).length !== 0 && !authenicated) {
+            MPP.client.sendArray([{m:"+custom"}]);
+
+            MPP = MPP || {};
+            MPP.addons = EXT;
+            for(var x = EXT._initfunc.length; x--;)
+                EXT._initfunc[x]();
+            EXT.__proto__ = null;
+            authenicated = true;
+        }
+    }, 100);
     /* By ming, v3 */
-    EXT = window.EXT || {_initfunc: []};
     EXT._initfunc.push(function(){
         var addon = EXT.draw = {__proto__: null};
-        addon.lineLife = 10;
+        addon.lineLife = 25;
         var p = document.createElement("canvas");
         p.id = "drawboard";
         p.style = "position: absolute; top: 0; left: 0; z-index: 400; pointer-events: none;";
@@ -178,7 +184,7 @@ $("#MVPS").css({position: "absolute", left: "1020px", top: "32px"}).on("click", 
         addon.customColor = null;
         addon.ctx = dbctx;
         addon.onrefresh = [];
-        addon.brushSize = 2;
+        addon.brushSize = 8;
         addon.mutes = [];
         addon.lines = [];
         addon.buf = [{n: "ldraw", v: 0}];
@@ -273,17 +279,17 @@ $("#MVPS").css({position: "absolute", left: "1020px", top: "32px"}).on("click", 
                     dv.setUint8(2, Math.round(u.x/100 * 255));
                     dv.setUint8(3, Math.round(u.y/100 * 255));
                     var s = String.fromCharCode.apply(null, new Uint8Array(b));
-                    var clr = addon.customColor
-                    addon.buf.push({n: s, v: Math.min(addon.brushSize, 200), d: parseInt(clr.slice(1), 16)});
+                    var clr = addon.customColor || MPP.client.getOwnParticipant().color;
+                    addon.buf.push({n: s, v: Math.min(addon.brushSize, 5), d: parseInt(clr.slice(1), 16)});
                     dv.setUint8(0, Math.round(u.x/100 * 255));
                     dv.setUint8(1, Math.round(u.y/100 * 255));
                     lastpos = [u.x, u.y];
-                    parseLine(s, clr, Math.min(addon.brushSize, 10));
+                    parseLine(s, clr, Math.min(addon.brushSize, 5));
                 }
                 if(clicking)
-                    setTimeout(poll, 25);
+                    setTimeout(poll, 1);
             }
-            setTimeout(poll, 25);
+            setTimeout(poll, 1);
         }
 
         addon.mkline = function(x, y, x2, y2, s, color){
@@ -314,16 +320,10 @@ $("#MVPS").css({position: "absolute", left: "1020px", top: "32px"}).on("click", 
                 });
             }
         });
-        MPP.client.on('c', ()=>{ addon.lines = [[0,0,0,0,0,0,"#0"]] });
-
-        MPP.client.on('hi', () => {
-            if (!MPP.client.customSubscribed) {
-                MPP.client.sendArray([{m:"+custom"}]);
-                MPP.client.customSubscribed = true;
-            }
+        MPP.client.on('c', ()=>{
+            addon.lines = [[0,0,0,0,0,0,"#0"]];
         });
     });
-
     function background_del(){
         if(backg) {
             var d=document.createElement('div');
