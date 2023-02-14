@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         PC sheet field
 // @namespace    http://tampermonkey.net/
-// @version      0.5
+// @version      0.5.1
 // @description  Script for pc players
 // @author       Hustandant#1917
 // @match        *://mppclone.com/*
@@ -14,8 +14,9 @@
 // @license      MIT
 // @icon         https://github.com/Hustoroff/mpp/blob/main/icon.png?raw=true
 // @grant        none
+// @run-at       document-end
 // ==/UserScript==
-window.addEventListener('DOMContentLoaded', (event) => {
+window.addEventListener('load', (event) => {
     $("#bottom .relative").append(`<div id="pc_btn" class="ugly-button">PC field</div>`);
     $("#pc_btn").css({position: "absolute", left: "1020px", top: "4px"}).on("click", () => {
         MPP.client.emit("notification", {
