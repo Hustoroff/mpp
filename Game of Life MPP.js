@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Game of Life MPP
 // @namespace    http://tampermonkey.net/
-// @version      0.4
+// @version      0.4.1
 // @description  John Conway’s Game of Life in MPP ¯\_(ツ)_/¯
 // @author       Hustandant#1917
 // @match        *://mppclone.com/*
@@ -14,8 +14,9 @@
 // @license      MIT
 // @icon         https://github.com/Hustoroff/mpp/blob/main/icon.png?raw=true
 // @grant        none
+// @run-at       document-end
 // ==/UserScript==
-window.addEventListener('DOMContentLoaded', (event) => {
+window.addEventListener('load', (event) => {
 var mashtab = 10, matr = [], indstrt = false, webBool = false, delay = 0.5, f = 0, LifeC = 0, setTime;
 
 MPP.client.on("a", function(msg) {
