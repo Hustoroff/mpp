@@ -4,10 +4,7 @@
 // @version      0.9.3
 // @description  Visualization of notes (based on Chacha-26 script)
 // @author       Hustandant#1917
-// @match        *://mppclone.com/*
-// @match        *://mpp.hyye.tk/*
-// @match        *://multiplayerpiano.com/*
-// @match        *://mppfork.netlify.app/*
+// @match        *://multiplayerpiano.net/*
 // @icon         https://github.com/Hustoroff/mpp/blob/main/icon.png?raw=true
 // @grant        none
 // @license      MIT
