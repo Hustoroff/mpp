@@ -4,13 +4,7 @@
 // @version      0.5.1
 // @description  Script for pc players
 // @author       Hustandant#1917
-// @match        *://mppclone.com/*
-// @include      *://www.multiplayerpiano.com/*
-// @include      *://multiplayerpiano.com/*
-// @include      *://piano.ourworldofpixels.com/*
-// @include      *://mppfork.netlify.app/*
-// @match        *.mpp.hri7566.info/*
-// @match        *://mpp.autoplayer.xyz/*
+// @match        *://multuplayerpiano.net/*
 // @license      MIT
 // @icon         https://github.com/Hustoroff/mpp/blob/main/icon.png?raw=true
 // @grant        none
